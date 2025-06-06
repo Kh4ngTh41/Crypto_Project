@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sinh/Lưu khóa</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Sinh khóa cá nhân</h2>
+        <form id="generateKeyForm">
+            <label>Username:</label>
+            <input type="text" id="username" required>
+            <label>Loại khóa:</label>
+            <select id="key_type" required>
+                <option value="">-- Chọn --</option>
+                <option value="ECDSA">ECDSA</option>
+                <option value="ML-DSA">ML-DSA</option>
+                <option value="RSA">RSA</option>
+            </select>
+            <label>Passphrase bảo vệ khóa:</label>
+            <input type="password" id="passphrase" required>
+            <button type="submit">Sinh khóa</button>
+        </form>
+        <div id="result"></div>
+        <a href="index.html">Quay lại Dashboard</a>
+    </div>
+    <script>
+        document.getElementById('generateKeyForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const key_type = document.getElementById('key_type').value;
+            const passphrase = document.getElementById('passphrase').value;
+            const res = await fetch("http://127.0.0.1:5560/api/generate_key", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({username, key_type, passphrase})
+            });
+            const data = await res.json();
+            document.getElementById('result').innerText = data.message;
+        }
+    </script>
+</body>
+</html>

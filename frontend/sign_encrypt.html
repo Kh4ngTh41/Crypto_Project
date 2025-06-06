@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ký số & Mã hóa giao dịch</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Ký số & Mã hóa giao dịch</h2>
+        <form id="signEncryptForm">
+            <label>Chọn file giao dịch (.json):</label>
+            <input type="file" id="order_file" accept=".json" required>
+            <label>Tên người ký (người mua):</label>
+            <input type="text" id="signer_name" required>
+            <label>Passphrase ECDSA:</label>
+            <input type="password" id="ecdsa_passphrase" required>
+            <label>Passphrase ML-DSA:</label>
+            <input type="password" id="mldsa_passphrase" required>
+            <label>Tên người nhận (người bán):</label>
+            <input type="text" id="receiver_name" required>
+            <button type="submit">Ký số & Mã hóa</button>
+        </form>
+        <div id="result"></div>
+        <a href="index.html">Quay lại Dashboard</a>
+    </div>
+    <script>
+        document.getElementById('signEncryptForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            const order_file = document.getElementById('order_file').files[0];
+            formData.append("order_file", order_file);
+            formData.append("signer_name", document.getElementById('signer_name').value);
+            formData.append("ecdsa_passphrase", document.getElementById('ecdsa_passphrase').value);
+            formData.append("mldsa_passphrase", document.getElementById('mldsa_passphrase').value);
+            formData.append("receiver_name", document.getElementById('receiver_name').value);
+
+            const res = await fetch("http://127.0.0.1:5560/api/sign_encrypt", {
+                method: "POST",
+                body: formData
+            });
+            const data = await res.json();
+            document.getElementById('result').innerText = data.message;
+        }
+    </script>
+</body>
+</html>

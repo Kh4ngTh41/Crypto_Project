@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giải mã & Xác thực giao dịch</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Giải mã & Xác thực giao dịch</h2>
+        <form id="decryptVerifyForm">
+            <label>Chọn file giao dịch đã mã hóa (.encrypted):</label>
+            <input type="file" id="encrypted_file" accept=".encrypted" required>
+            <label>Tên người nhận (người bán):</label>
+            <input type="text" id="receiver_name" required>
+            <label>Passphrase RSA:</label>
+            <input type="password" id="rsa_passphrase" required>
+            <button type="submit">Giải mã & Xác thực</button>
+        </form>
+        <div id="result"></div>
+        <a href="index.html">Quay lại Dashboard</a>
+    </div>
+    <script>
+        document.getElementById('decryptVerifyForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            const encrypted_file = document.getElementById('encrypted_file').files[0];
+            formData.append("encrypted_file", encrypted_file);
+            formData.append("receiver_name", document.getElementById('receiver_name').value);
+            formData.append("rsa_passphrase", document.getElementById('rsa_passphrase').value);
+
+            const res = await fetch("http://127.0.0.1:5560/api/decrypt_verify", {
+                method: "POST",
+                body: formData
+            });
+            const data = await res.json();
+            document.getElementById('result').innerText = data.message;
+        }
+    </script>
+</body>
+</html>

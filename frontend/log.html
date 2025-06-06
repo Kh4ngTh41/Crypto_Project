@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xem log thao tác</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Lịch sử thao tác hệ thống</h2>
+        <div id="logContent"></div>
+        <a href="index.html">Quay lại Dashboard</a>
+    </div>
+    <script>
+        window.onload = async () => {
+            const res = await fetch("http://127.0.0.1:5560/api/get_log");
+            const data = await res.json();
+            document.getElementById('logContent').innerText = data.log || 'Không có log.';
+        }
+    </script>
+</body>
+</html>
