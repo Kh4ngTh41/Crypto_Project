@@ -1,0 +1,21 @@
+{
+  "scan_mode": "snapshot",
+  "repo_path": "/mnt/c/Users/khangtt9/VinSOC-repo/Crypto_Project/",
+  "total_files": 5,
+  "total_lines": 652,
+  "by_language": {
+    "python": {
+      "files": 5,
+      "lines": 652
+    }
+  },
+  "cost": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "estimated_cost": 0.0,
+    "currency": "USD",
+    "models_unpriced": [],
+    "by_agent": {}
+  }
+}

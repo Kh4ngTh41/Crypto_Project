@@ -1,0 +1,258 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Heimdall",
+          "version": "0.1.8",
+          "fullName": "Heimdall v0.1.8",
+          "informationUri": "https://gitlab.vinsmartfuture.tech/vinsoc-ai/ai-research/heimdall",
+          "rules": [
+            {
+              "id": "CWE-22",
+              "name": "Path Traversal in Key Generation Endpoint Allows Arbitrary File Write",
+              "shortDescription": {
+                "text": "Path Traversal in Key Generation Endpoint Allows Arbitrary File Write"
+              },
+              "fullDescription": {
+                "text": "### Path Traversal in Key Generation Endpoint Allows Arbitrary File Write\n\n**CVSS3.1 Vector**: `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:L` (Score: 7.1)\n\n**Description:** The `/api/generate_key` endpoint accepts a `username` parameter from user-controlled JSON input and uses it to construct file paths without validation. The `save_pem()` function then opens these paths directly for writing. An attacker can supply a username containing directory traversal sequences (e.g., `../../etc/passwd`) t…"
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "help": {
+                "text": "### Path Traversal in Key Generation Endpoint Allows Arbitrary File Write\n\n**CVSS3.1 Vector**: `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:L` (Score: 7.1)\n\n**Description:** The `/api/generate_key` endpoint accepts a `username` parameter from user-controlled JSON input and uses it to construct file paths without validation. The `save_pem()` function then opens these paths directly for writing. An attacker can supply a username containing directory traversal sequences (e.g., `../../etc/passwd`) t…"
+              },
+              "helpUri": "https://cwe.mitre.org/data/definitions/22.html"
+            },
+            {
+              "id": "CWE-327",
+              "name": "AES-CBC Encryption Lacks Integrity Protection (Padding Oracle Risk)",
+              "shortDescription": {
+                "text": "AES-CBC Encryption Lacks Integrity Protection (Padding Oracle Risk)"
+              },
+              "fullDescription": {
+                "text": "### AES-CBC Encryption Lacks Integrity Protection (Padding Oracle Risk)\n\n**CVSS3.1 Vector**: `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N` (Score: 5.4)\n\n**Description:** The encrypt_bytes function encrypts data using AES in CBC mode, which only provides confidentiality — not integrity. Without an integrity check (such as HMAC) or an authenticated encryption mode (such as AES-GCM), an attacker who can observe ciphertext and influence decryption can exploit padding validation errors to recover p…"
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "help": {
+                "text": "### AES-CBC Encryption Lacks Integrity Protection (Padding Oracle Risk)\n\n**CVSS3.1 Vector**: `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N` (Score: 5.4)\n\n**Description:** The encrypt_bytes function encrypts data using AES in CBC mode, which only provides confidentiality — not integrity. Without an integrity check (such as HMAC) or an authenticated encryption mode (such as AES-GCM), an attacker who can observe ciphertext and influence decryption can exploit padding validation errors to recover p…"
+              },
+              "helpUri": "https://cwe.mitre.org/data/definitions/327.html"
+            }
+          ]
+        }
+      },
+      "automationDetails": {
+        "id": "my-scan"
+      },
+      "results": [
+        {
+          "ruleId": "CWE-22",
+          "level": "error",
+          "message": {
+            "text": "Path Traversal in Key Generation Endpoint Allows Arbitrary File Write: ### Path Traversal in Key Generation Endpoint Allows Arbitrary File Write\n\n**CVSS3.1 Vector**: `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:L` (Score: 7.1)\n\n**Description:** The `/api/generate_key` endpoint accepts a `username` parameter from user-controlled JSON input and uses it to construct file paths without validation. The `save_pem()` function then opens these paths directly for writing. An attacker can supply a username containing directory traversal sequences (e.g., `../../etc/passwd`) t…"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "modules/crypto_utils.py"
+                },
+                "region": {
+                  "startLine": 75,
+                  "endLine": 77,
+                  "snippet": {
+                    "text": "def save_pem(filename, pem_bytes):\n    with open(filename, \"wb\") as f:\n        f.write(pem_bytes)"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 72,
+                  "endLine": 80,
+                  "snippet": {
+                    "text": "    else:\n        return pub_bytes, priv_bytes\n\ndef save_pem(filename, pem_bytes):\n    with open(filename, \"wb\") as f:\n        f.write(pem_bytes)\n\n# ==== Load key ===="
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "c440ef09a2f98bce1143f7b606483350d132df70e4307f143e4bfd22a0940d70"
+          },
+          "properties": {
+            "cwe": "CWE-22",
+            "severity": "High",
+            "cvss_score": 7.1,
+            "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:L",
+            "affected_entry_points": [
+              {
+                "type": "http_endpoint",
+                "identifier": "api_generate_key",
+                "file_path": "app.py",
+                "description": "POST /api/generate_key — accepts a username parameter that is used to construct file paths without validation, allowing path traversal to write arbitrary files",
+                "route": "/api/generate_key"
+              }
+            ]
+          },
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "app.py"
+                          },
+                          "region": {
+                            "startLine": 25,
+                            "endLine": 60
+                          }
+                        },
+                        "message": {
+                          "text": "Function:app.py:api_generate_key"
+                        }
+                      },
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "modules/crypto_utils.py"
+                          },
+                          "region": {
+                            "startLine": 74,
+                            "endLine": 76
+                          }
+                        },
+                        "message": {
+                          "text": "Function:modules/crypto_utils.py:save_pem"
+                        }
+                      },
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "CWE-327",
+          "level": "warning",
+          "message": {
+            "text": "AES-CBC Encryption Lacks Integrity Protection (Padding Oracle Risk): ### AES-CBC Encryption Lacks Integrity Protection (Padding Oracle Risk)\n\n**CVSS3.1 Vector**: `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N` (Score: 5.4)\n\n**Description:** The encrypt_bytes function encrypts data using AES in CBC mode, which only provides confidentiality — not integrity. Without an integrity check (such as HMAC) or an authenticated encryption mode (such as AES-GCM), an attacker who can observe ciphertext and influence decryption can exploit padding validation errors to recover p…"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "modules/crypto_utils.py"
+                },
+                "region": {
+                  "startLine": 12,
+                  "endLine": 19,
+                  "snippet": {
+                    "text": "def encrypt_bytes(key, plaintext):\n    iv = os.urandom(16)\n    cipher = Cipher(algorithms.AES(key), modes.CBC(iv))\n    encryptor = cipher.encryptor()\n    pad_len = 16 - (len(plaintext) % 16)\n    padded = plaintext + bytes([pad_len] * pad_len)\n    ciphertext = encryptor.update(padded) + encryptor.finalize()\n    return iv + ciphertext"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 9,
+                  "endLine": 22,
+                  "snippet": {
+                    "text": "\n# ==== Tiện ích mã hóa/giải mã AES cho file key ML-DSA ====\n\ndef encrypt_bytes(key, plaintext):\n    iv = os.urandom(16)\n    cipher = Cipher(algorithms.AES(key), modes.CBC(iv))\n    encryptor = cipher.encryptor()\n    pad_len = 16 - (len(plaintext) % 16)\n    padded = plaintext + bytes([pad_len] * pad_len)\n    ciphertext = encryptor.update(padded) + encryptor.finalize()\n    return iv + ciphertext\n\ndef decrypt_bytes(key, ciphertext):\n    iv = ciphertext[:16]"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "primaryLocationLineHash": "6cc5b2bcd7233bb71f04b9827b7218392e3b31863c40720c7c6be97d3eea5c24"
+          },
+          "properties": {
+            "cwe": "CWE-327",
+            "severity": "Medium",
+            "cvss_score": 5.4,
+            "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+            "affected_entry_points": [
+              {
+                "type": "http_endpoint",
+                "identifier": "api_generate_key",
+                "file_path": "app.py",
+                "description": "POST /api/generate_key — Generates cryptographic keys (ECDSA, RSA, ML-DSA) and encrypts private keys using encrypt_bytes. The ML-DSA path calls mldsa_keygen which uses encrypt_bytes to protect the private key with the user's passphrase.",
+                "route": "/api/generate_key"
+              }
+            ]
+          },
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "api/routes.py"
+                          },
+                          "region": {
+                            "startLine": 1,
+                            "endLine": 1
+                          }
+                        },
+                        "message": {
+                          "text": "api_generate_key"
+                        }
+                      },
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "modules/crypto_utils.py"
+                          },
+                          "region": {
+                            "startLine": 64,
+                            "endLine": 72
+                          }
+                        },
+                        "message": {
+                          "text": "Function:modules/crypto_utils.py:mldsa_keygen"
+                        }
+                      },
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "modules/crypto_utils.py"
+                          },
+                          "region": {
+                            "startLine": 11,
+                            "endLine": 18
+                          }
+                        },
+                        "message": {
+                          "text": "Function:modules/crypto_utils.py:encrypt_bytes"
+                        }
+                      },
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
